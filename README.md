@@ -1,2 +1,56 @@
-# carrot
-Collecting and Analyzing Rhizodeposits: Reviewing and Optimizing Tool (CARROT)
+# Collecting and Analyzing Rhizodeposits: Reviewing and Optimizing Tool (CARROT)
+
+**Licence:** [CeCILL-C](http://www.cecill.info/licences/Licence_CeCILL-C_V1-en.html)  
+
+### Aims & purposes
+
+<i>CARROT</i> is a decision support tool aiming to guide a user towards the protocol of rhizodeposits collection and analysis best suited for his/her own objectives and constraints. The tool enables to move along a complex decision tree in order to identify options for successive protocol steps that are either recommended, alternative or incompatible with the set of choices progressively selected by the user. CARROT does not intend to create a complete, operational protocol of rhizodeposit collection & analysis, but rather aims to orientate the user towards the best methods by giving him/her synthetic information.
+
+### How to start <i>CARROT</i>
+
+<i>CARROT</i> has been written as an R Shiny application. The package available on https://github.com/frees86/carrot contains:
+<li> the R file "app.R" containing the original code, </li>
+<li> the folder "source" containing the source files (e.g. the decision tree and the Supporting Information tables), </li>
+<li> the folder "docs" that allows to generate the corresponding GitHub page. </li>
+
+The program <i>CARROT</i> can be either:
+<li>launched online without any installation by accessing the corresponding GitHub Page (https://frees86.github.io/carrot)
+<li>used as an R program by executing the file ‘app.R’ in an R console - <i>note that the file 'app.R' needs to be located in the same folder as the folder 'source' containing the supporting tables. </i>
+
+### How to use <i>CARROT</i>
+
+After launching the program, the first step is to select one of the five groups of instructions from which to start:
+1.	Scientific questions & objectives
+2.	Growth conditions
+3.	Sampling method
+4.	Sample treatment
+5.	Sample analysis
+
+<i> Note: It is recommended to start by “Scientific questions & objectives” and to follow the logical order of these successive groups of instructions. However, the user can choose to go through these groups of instructions in any order, knowing that this order has consequences on the evaluation of the compatibility of successive options to one another. </i><br/>
+<br/>
+The next step is to select one of the possible options corresponding to the first instruction. For this instruction and all subsequent ones, a Supporting Information table is displayed on the right panel and aims to provide relevant, synthetic information to support the decision. Additional information is also usually provided in the companion scientific article.<br/>
+<br/>
+Once a first option has been selected and the instruction for a new protocol step is considered, a compatibility test is activated, and automatically labels each option as “Recommended”, “Possible” or “Incompatible”, based on previous choices. The reason for which a given option is deemed incompatible can be further explored by ticking the box “Show details about incompatible options” displayed above the instruction.<br/>
+<br/>
+<i> Note: if all possible options of a given instruction are deemed incompatible with previous choices, the instruction will be skipped and the program will automatically display the next instruction without notice. </i><br/>
+<br/>
+When all possible instructions within one group of instructions have been covered, a new group of instructions can be selected, and the selection procedure can continue. Note that a group of instructions can be revisited later one. In such case, a warning is displayed to confirm the choice, and, when confirmed, the previous choices related to this group of instruction will be overwritten.<br/>
+<br/>
+Once all possible options within each group of instructions - or at any moment within the protocol construction, the user can access and download the resulting protocol corresponding to the selected choices by moving to the tab “Updated protocol”. There, the user can either:
+<li> download the protocol as a CSV file summarizing the instruction and corresponding choice in each group, as well as detailing the compatibility test for each option,
+<li> download a text file summarizing the main steps of the protocol.
+
+### Troubleshooting
+
+To report persisting issues or suggest improvements, please contact Frédéric Rees (frederic.rees@inrae.fr).
+
+### Reference
+
+The decision support tool <i>CARROT</i> is associated to a companion scientific article, currently under review.
+
+### Credits
+
+This works originates from discussions held within the French network RhizosPHARE and the previous project PHARE (2021-2022) funded by INRAE.<br/>
+<br/>
+<li> Conception & programing: Frédéric Rees
+<li> Writing, editing & testing: Frédéric Rees, Sylvain Chéreau, Alexandre de Saint Germain, Sylvie Dinant, Virginie Lauvergeat, Barbara Pawlak, Jean-Benoît Peltier, François Perreau, Emmanuelle Personeni, Gabin Piton, Jean-Bernard Pouvreau, Aude Tixier, Anouk Zancarini, Agnès Attard
