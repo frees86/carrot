@@ -9,13 +9,13 @@
 ### How to start <i>CARROT</i>
 
 <i>CARROT</i> has been written as an R Shiny application. The package available on https://github.com/frees86/carrot contains:
-<li> the R file "app.R" containing the original code, </li>
-<li> the folder "source" containing the source files (e.g. the decision tree and the Supporting Information tables), </li>
-<li> the folder "docs" that allows to generate the corresponding GitHub page. </li>
+- the R file "app.R" containing the original code,
+- the folder "source" containing the source files (e.g. the decision tree and the Supporting Information tables), 
+- the folder "docs" that allows to generate the corresponding GitHub page.<br/>
 
 The program <i>CARROT</i> can be either:
-<li>launched online without any installation by accessing the corresponding GitHub Page (https://frees86.github.io/carrot)
-<li>used as an R program by executing the file ‘app.R’ in an R console - <i>note that the file 'app.R' needs to be located in the same folder as the folder 'source' containing the supporting tables. </i>
+- launched online without any installation by accessing the corresponding GitHub Page (https://frees86.github.io/carrot)
+- used as an R program by executing the file ‘app.R’ in an R console - <i>note that the file 'app.R' needs to be located in the same folder as the folder 'source' containing the supporting tables. </i>
 
 ### How to use <i>CARROT</i>
 
@@ -24,7 +24,7 @@ After launching the program, the first step is to select one of the five groups 
 2.	Growth conditions
 3.	Sampling method
 4.	Sample treatment
-5.	Sample analysis
+5.	Sample analysis<br/>
 
 <i> Note: It is recommended to start by “Scientific questions & objectives” and to follow the logical order of these successive groups of instructions. However, the user can choose to go through these groups of instructions in any order, knowing that this order has consequences on the evaluation of the compatibility of successive options to one another. </i><br/>
 <br/>
@@ -40,10 +40,6 @@ Once all possible options within each group of instructions - or at any moment w
 <li> download the protocol as a CSV file summarizing the instruction and corresponding choice in each group, as well as detailing the compatibility test for each option,
 <li> download a text file summarizing the main steps of the protocol.
 
-### Troubleshooting
-
-To report persisting issues or suggest improvements, please contact Frédéric Rees (frederic.rees@inrae.fr).
-
 ### Reference
 
 The decision support tool <i>CARROT</i> is associated to a companion scientific article, currently under review.
@@ -51,6 +47,6 @@ The decision support tool <i>CARROT</i> is associated to a companion scientific 
 ### Credits
 
 This works originates from discussions held within the French network RhizosPHARE and the previous project PHARE (2021-2022) funded by INRAE.<br/>
-<br/>
-<li> Conception & programing: Frédéric Rees
-<li> Writing, editing & testing: Frédéric Rees, Sylvain Chéreau, Alexandre de Saint Germain, Sylvie Dinant, Virginie Lauvergeat, Barbara Pawlak, Jean-Benoît Peltier, François Perreau, Emmanuelle Personeni, Gabin Piton, Jean-Bernard Pouvreau, Aude Tixier, Anouk Zancarini, Agnès Attard
+
+- <b>Conception & programing:</b> Frédéric Rees
+- <b>Writing, editing & testing:</b> Frédéric Rees, Sylvain Chéreau, Alexandre de Saint Germain, Sylvie Dinant, Virginie Lauvergeat, Barbara Pawlak, Jean-Benoît Peltier, François Perreau, Emmanuelle Personeni, Gabin Piton, Jean-Bernard Pouvreau, Aude Tixier, Anouk Zancarini, Agnès Attard
