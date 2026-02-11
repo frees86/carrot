@@ -33,6 +33,21 @@ library(bslib)
 
 library(shinylive)
 library(httpuv)
+library(svglite)
+
+# WATCH OUT: Because of a bug when downloading results after exporting the app online with shinylive,
+# we redefine the functions downloadLink and downloadButton here (origin: https://shiny.posit.co/r/components/inputs/download-link/):
+
+downloadLink <- function(...) {
+  tag <- shiny::downloadLink(...)
+  tag$attribs$download <- NULL
+  tag
+}
+downloadButton <- function(...) {
+  tag <- shiny::downloadButton(...)
+  tag$attribs$download <- NULL
+  tag
+}
 
 ######################################################################################################
 ######################################################################################################
@@ -286,7 +301,10 @@ server <- function(input, output, session) {
   outputOptions(output, "incompatible_options", suspendWhenHidden = FALSE) # This allow to use this as a condition in a conditionalPanel, even if the output is not shown
   # We initialize the current group ID number:
   output$current_group_ID = reactive({ values$current_group_ID })
-  outputOptions(output, "current_group_ID", suspendWhenHidden = FALSE) # This 
+  outputOptions(output, "current_group_ID", suspendWhenHidden = FALSE) # This allow to use this as a condition in a conditionalPanel, even if the output is not shown
+  
+  output$download_protocol_text = reactive({ values$protocol_full_text })
+  outputOptions(output, "download_protocol_text", suspendWhenHidden = FALSE)
   
   # --- LOADING THE DATA ---
   #-----------------------------------------------------------------------------------------------------
@@ -1118,6 +1136,7 @@ server <- function(input, output, session) {
     datatable(values$history[, c("Group", "Instruction", "Choice")], 
               options = list(pageLength = 50))
   })
+  
   # Options for downloading the final protocol as CSV file:
   output$download_protocol_csv <- downloadHandler(
     filename = function() { paste("CARROT_Protocol_", Sys.Date(), ".csv", sep="") },
@@ -1126,6 +1145,7 @@ server <- function(input, output, session) {
       write.csv(values$history[, c("Group", "Instruction", "Options", "Choice")], file, row.names = FALSE)
     }
   )
+  
   # Options for downloading the final protocol as .txt file:
   output$download_protocol_text <- downloadHandler(
     filename = function() { paste("CARROT_Protocol_", Sys.Date(), ".txt", sep="") },
@@ -1133,6 +1153,7 @@ server <- function(input, output, session) {
       writeLines(values$protocol_full_text, file)
     }
   )
+
 }
 
 ######################################################################################################
