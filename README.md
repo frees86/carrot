@@ -8,10 +8,11 @@
 
 ### How to start <i>CARROT</i>
 
-<i>CARROT</i> has been written as an R Shiny application. The package available on https://github.com/frees86/carrot contains:
+<i>CARROT</i> has been written as an R Shiny application. The package available on https://github.com/frees86/carrot contains in particular:
 - the R file "app.R" containing the original code,
 - the folder "source" containing the source files (e.g. the decision tree and the Supporting Information tables), 
-- the folder "docs" that allows to generate the corresponding GitHub page.<br/>
+- the folder "docs" that allows to generate the corresponding GitHub page,<br/>
+- the PDF file "CARROT User manual.pdf".<br/>
 
 The program <i>CARROT</i> can be either:
 - launched online without any installation by accessing the corresponding GitHub Page (https://frees86.github.io/carrot)
@@ -35,10 +36,10 @@ Once a first option has been selected and the instruction for a new protocol ste
 <i> Note: if all possible options of a given instruction are deemed incompatible with previous choices, the instruction will be skipped and the program will automatically display the next instruction without notice. </i><br/>
 <br/>
 When all possible instructions within one group of instructions have been covered, a new group of instructions can be selected, and the selection procedure can continue. Note that a group of instructions can be revisited later one. In such case, a warning is displayed to confirm the choice, and, when confirmed, the previous choices related to this group of instruction will be overwritten.<br/>
-<br/>
-Once all possible options within each group of instructions - or at any moment within the protocol construction, the user can access and download the resulting protocol corresponding to the selected choices by moving to the tab “Updated protocol”. There, the user can either:
-<li> download the protocol as a CSV file summarizing the instruction and corresponding choice in each group, as well as detailing the compatibility test for each option,
-<li> download a text file summarizing the main steps of the protocol.
+
+Once all possible options within each group of instructions - or at any moment within the protocol construction, the user can access and download the resulting protocol corresponding to the selected choices by moving to the tab “Updated protocol”. There, the user can:
+- download the protocol as a CSV file summarizing the instruction and corresponding choice in each group, as well as detailing the compatibility test for each option, 
+- download a text file summarizing the main steps of the protocol.
 
 ### Reference
 
@@ -49,4 +50,4 @@ The decision support tool <i>CARROT</i> is associated to a companion scientific 
 This works originates from discussions held within the French network RhizosPHARE and the previous project PHARE (2021-2022) funded by INRAE.<br/>
 
 - <b>Conception & programing:</b> Frédéric Rees
-- <b>Writing, editing & testing:</b> Frédéric Rees, Sylvain Chéreau, Alexandre de Saint Germain, Sylvie Dinant, Virginie Lauvergeat, Barbara Pawlak, Jean-Benoît Peltier, François Perreau, Emmanuelle Personeni, Gabin Piton, Jean-Bernard Pouvreau, Aude Tixier, Anouk Zancarini, Agnès Attard
+- <b>Writing, editing & testing:</b> Frédéric Rees, Virginie Lauvergeat, Jean-Benoît Peltier, Gabin Piton, Aude Tixier, Sylvain Chéreau, Sylvie Dinant, Barbara Pawlak, François Perreau, Emmanuelle Personeni, Jean-Bernard Pouvreau, Alexandre de Saint Germain, Anouk Zancarini, Agnès Attard
