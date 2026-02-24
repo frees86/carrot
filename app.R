@@ -2,16 +2,19 @@
 # APPLICATION SHINY : CARROT PROTOCOL SELECTOR
 # =============================================
 
-# We document the version of the code, which will appear in the Shiny app:
-version <- "Version: 2026-02-10"
+# We document the version of the code, which will appear in the Shiny app (update the logo too!):
+version <- "Version: 2026-02-24"
 
 # We define the path to the folder containing the csv or Excel files to be loaded:
 folder_path <- "./source/"
+# # IF THE PREVIOUS PATH CANNOT BE FOUND, you may need to give the whole path to this folder:
+# folder_path <- "C:/Users/frees/carrot/source/"
 
 # # To install the required packages (to do only once - note that it may be important to update readxl):
 # install.packages("shiny")
 # install.packages("readxl")
 # install.packages("openxlsx")
+# install.packages("xlsx")
 # install.packages("stringr")
 # install.packages("dplyr")
 # install.packages("shinythemes")
@@ -24,6 +27,7 @@ folder_path <- "./source/"
 # Loading the required packages:
 library(readxl)
 library(openxlsx)
+library(xlsx)
 library(stringr)
 library(dplyr)
 library(shiny)
@@ -66,12 +70,12 @@ ui <- page_fillable(
   tags$head(
     tags$style(HTML("
       body { background-color: white; color: black; }
-      h2 { font-family: 'Calibri', sans-serif;  color: orange; font-weight: bold; }
+      h2 { font-family: 'Calibri', sans-serif;  color: rgb(217,152,21); font-weight: bold; }
       h4 { font-family: 'Calibri', sans-serif;  color: black; font-weight: bold; }
       
       .option-recommended { color: ForestGreen; font-weight: bold; }
       .option-possible { color: YellowGreen; font-weight: bold; }
-      .option-incompatible { color: Crimson; text-decoration: line-through; }
+      .option-incompatible { color: rgb(220,0,0); text-decoration: line-through; }
       .option-neutral { color: black; }
       
       li { margin-left: 1em; }
@@ -83,12 +87,36 @@ ui <- page_fillable(
   
   # We display the title:
   h2("CARROT: Collecting and Analyzing Rhizodeposits - Reviewing and Optimizing Tool"),
-  # p(""),
-  # We display the version of the software, defined at the beginning of the code:
+  # We display below the version of the software, defined at the beginning of the code:
   h6(version, style = "font-weight: bold; font-style: italic"),
+  
+  # # We insert the logo, title and version of CARROT:
+  # mainPanel(
+  #   style = "height: 10vh; overflow-y: visible",
+  #   layout_columns(
+  #     col_widths = c(8, 4),
+  #     # row_heights =c(1),
+  #     # We insert the logo of CARROT:
+  #     # card(img(src='CARROT_logo.png', align = "left", height="50%", width="50%")),
+  #     card("Card 1"),
+  #     card(
+  #       # We display the title:
+  #       h2("CARROT: Collecting and Analyzing Rhizodeposits - Reviewing and Optimizing Tool"),
+  #       # # We display below the version of the software, defined at the beginning of the code:
+  #       # h6(version, style = "font-weight: bold; font-style: italic"),
+  #       ),
+  #   ),
+  # ),
+
+  # # We insert the logo of CARROT (containing the title and the version, to be changed each time):
+  # # img(src='CARROT_logo_and_text.png', align = "left", height="135px", width="675px"),
+  # mainPanel(
+  #   # htmlOutput("picture"),
+  #   uiOutput("picture"),
+  #   ),
+  
+  # We set a horizontal line:
   p(""),
-  # # We set a horizontal line:
-  # hr(),
 
   # Defining the layout with a main panel and a side panel:
   sidebarLayout(
@@ -146,7 +174,7 @@ ui <- page_fillable(
         # We show a box to check if details about incompatible options are to be displayed:
         conditionalPanel(
           condition = "output.incompatible_options",
-          style = "color: red; font-style: italic",
+          style = "color: rgb(220,0,0); font-style: italic",
           checkboxInput("showing_incompatibility_details", "Show details about incompatible options")
         ),
         # We show the current instruction and the possible options:
@@ -200,7 +228,7 @@ ui <- page_fillable(
           tags$b("Supporting Information"),  
           conditionalPanel(
             condition = "output.screen == 'working'",  
-            style = "height: 100vh; overflow-y: auto; text-align: left;",
+            style = "height: 80vh; overflow-y: auto; text-align: left;",
             p(""),
             # We display the text referring to the section in the article:
             uiOutput(outputId = "SI_table_reference"),
@@ -217,13 +245,16 @@ ui <- page_fillable(
             condition = "output.screen == 'working' & nrow(values$history) > 1",
             tabsetPanel(
               tabPanel("As table",
+                       style = "height: 80vh; overflow-y: auto; text-align: left;",
                        h2(""),
                        downloadButton("download_protocol_csv", "Download the updated protocol (.csv)"),
+                       downloadButton("download_protocol_excel", "Download the updated protocol (.xlsx)"),
                        h2(""),
                        DT::DTOutput("final_table"),
                        h2(""),
               ),
               tabPanel("As text",
+                       style = "height: 80vh; overflow-y: auto; text-align: left;",
                        h2(""),
                        downloadButton("download_protocol_text", "Download the updated protocol (.txt)"),
                        h2(""),
@@ -794,7 +825,7 @@ server <- function(input, output, session) {
       
       # We add the detail of incompatible previous choices if necessary:
       if (stat == "Incompatible" & input$showing_incompatibility_details == TRUE) {
-        label_str <- paste0(label_str, "<br><small style='color:red'> (Incompatible with: ", conflict, ")</small>")
+        label_str <- paste0(label_str, "<br><small style='color:rgb(220,0,0)'> (Incompatible with: ", conflict, ")</small>")
       }
       
       # We return the HTML string to be displayed for the option:
@@ -1095,6 +1126,15 @@ server <- function(input, output, session) {
   observeEvent(input$button_restart, {
     # We now allow moving to another type of screen:
     values$screen <- "start"
+    # We reinitialize the list of group ID already visited:
+    values$visited_groups_id <- list()
+    # We reset the history and other variables:
+    values$history <- data.frame()
+    values$incompatible_pending <- NULL
+    values$incompatible_options <- FALSE
+    values$protocol_full_text <- ""
+    values$last_text_added <- ""
+    values$current_group_ID = 1
     # And we forbid using the "Back" button at the next step:
     values$backwards_option <- "Disabled"
   })
@@ -1106,7 +1146,35 @@ server <- function(input, output, session) {
   observeEvent(input$button_resume, {
     # We now allow moving to another type of screen:
     values$screen <- "move_to_next_group"
-    # And we forbid using the "Back" button at the next step:
+    # We reinitialize the list of group ID already visited:
+    values$visited_groups_id <- list()
+    # And we update the corresponding radioButton to display already-examined groups in grey.
+    # We define the normal list to be displayed:
+    list_of_options <- list("1: Scientific objectives",
+                            "2: Plant growth conditions",
+                            "3: Sampling strategy",
+                            "4: Sample processing before analysis",
+                            "5: Sample analysis")
+    # We initialize the new list to be displayed with the HTML code:
+    new_HTML_list <- list_of_options
+    # We cover each group:
+    for (ID in seq(1,5)) {
+      # If the group corresponding to the current ID has been visited:
+      if (ID %in% values$visited_groups_id) {
+        special_format <- paste0("<p style='color: grey; margin-bottom:0; padding-top:0;'</p>",list_of_options[[ID]])
+        new_HTML_list[[ID]] <- HTML(special_format)
+      } else {
+        special_format <- paste0("<p style='color: black; margin-bottom:0; padding-top:0;'</p>",list_of_options[[ID]])
+        new_HTML_list[[ID]] <- HTML(special_format)
+      }
+    }
+    updateRadioButtons(session, "continue_group",
+                       # tags$style(HTML("line-height:3;")),
+                       choiceNames = new_HTML_list, 
+                       choiceValues = c(1,2,3,4,5),
+                       selected=values$current_group_ID)
+
+        # And we forbid using the "Back" button at the next step:
     values$backwards_option <- "Disabled"
   })
   #----------------------------------------------------------------------------------------------------
@@ -1120,7 +1188,7 @@ server <- function(input, output, session) {
     grp <- as.character(values$decision_tree[values$current_row, 1])
     tagList(
       tags$b("Current group: "), # br(),
-      span(grp, style = "color: #3498db; font-weight: bold")
+      span(grp, style = "color: rgb(217,152,21); font-weight: bold")
     )
   })
   # Option for creating a summarized history table with only Instruction and Choice:
@@ -1142,7 +1210,20 @@ server <- function(input, output, session) {
     filename = function() { paste("CARROT_Protocol_", Sys.Date(), ".csv", sep="") },
     content = function(file) {
       # We select only the columns of interest in the 'history' table:
-      write.csv(values$history[, c("Group", "Instruction", "Options", "Choice")], file, row.names = FALSE)
+      write.csv(values$history[, c("Group", "Instruction", "Options", "Choice")],
+                file, row.names = FALSE)
+      # write.csv2(values$history[, c("Group", "Instruction", "Options", "Choice")], 
+      #           file, row.names = FALSE)
+    }
+  )
+  
+  # Options for downloading the final protocol as Excel file:
+  output$download_protocol_excel <- downloadHandler(
+    filename = function() { paste("CARROT_Protocol_", Sys.Date(), ".xlsx", sep="") },
+    content = function(file) {
+      # We select only the columns of interest in the 'history' table:
+      write.xlsx(values$history[, c("Group", "Instruction", "Options", "Choice")],
+                file, row.names = FALSE)
     }
   )
   
@@ -1153,7 +1234,24 @@ server <- function(input, output, session) {
       writeLines(values$protocol_full_text, file)
     }
   )
-
+  
+  # # Importing an external image (not working when used as an online app):
+  # output$picture <-
+  #   # renderText({
+  #   #   c(
+  #   #     '<img src="',
+  #   #     # "https://github.com/frees86/carrot/blob/main/source/CARROT_logo_and_text.png",
+  #   #     "https://github.com/frees86/carrot/blob/ffb97af3e83c758f0fad36743fdfa18c56351034/source/CARROT_logo_and_text.png",
+  #   #     # "http://drive.google.com/uc?export=view&id=0By6SOdXnt-LFaDhpMlg3b3FiTEU",
+  #   #     '">'
+  #   #   )
+  #   # })
+  #   
+  #   renderUI({
+  #     # img(src = "CARROT_logo_and_text.png", align = "left", height="135px", width="675px")
+  #     img(src = "https://i.sstatic.net/mTqXa.png",
+  #         align = "left", height="135px", width="675px")
+  #   })
 }
 
 ######################################################################################################
@@ -1164,9 +1262,6 @@ shinyApp(ui = ui, server = server)
 
 ######################################################################################################
 ######################################################################################################
-
-#TODO: 
-# exudates: no recommended option for storage temperature - why?
 
 # CREATING THE APP TO BE USED ONLINE ON GITHUB PAGES:
 #####################################################
