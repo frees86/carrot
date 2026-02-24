@@ -85,10 +85,10 @@ ui <- page_fillable(
   # Customized margins:
   style="margin:2vw; margin-top: 0vw; margin-bottom: 0vw; overflow: auto",
   
-  # We display the title:
-  h2("CARROT: Collecting and Analyzing Rhizodeposits - Reviewing and Optimizing Tool"),
-  # We display below the version of the software, defined at the beginning of the code:
-  h6(version, style = "font-weight: bold; font-style: italic"),
+  # # We display the title:
+  # h2("CARROT: Collecting and Analyzing Rhizodeposits - Reviewing and Optimizing Tool"),
+  # # We display below the version of the software, defined at the beginning of the code:
+  # h6(version, style = "font-weight: bold; font-style: italic"),
   
   # # We insert the logo, title and version of CARROT:
   # mainPanel(
@@ -108,12 +108,12 @@ ui <- page_fillable(
   #   ),
   # ),
 
-  # # We insert the logo of CARROT (containing the title and the version, to be changed each time):
-  # # img(src='CARROT_logo_and_text.png', align = "left", height="135px", width="675px"),
-  # mainPanel(
-  #   # htmlOutput("picture"),
-  #   uiOutput("picture"),
-  #   ),
+  # We insert the logo of CARROT (containing the title and the version, to be changed each time):
+  # img(src='CARROT_logo_and_text.png', align = "left", height="135px", width="675px"),
+  mainPanel(
+    # htmlOutput("picture"),
+    uiOutput("picture"),
+    ),
   
   # We set a horizontal line:
   p(""),
@@ -1235,23 +1235,24 @@ server <- function(input, output, session) {
     }
   )
   
-  # # Importing an external image (not working when used as an online app):
-  # output$picture <-
-  #   # renderText({
-  #   #   c(
-  #   #     '<img src="',
-  #   #     # "https://github.com/frees86/carrot/blob/main/source/CARROT_logo_and_text.png",
-  #   #     "https://github.com/frees86/carrot/blob/ffb97af3e83c758f0fad36743fdfa18c56351034/source/CARROT_logo_and_text.png",
-  #   #     # "http://drive.google.com/uc?export=view&id=0By6SOdXnt-LFaDhpMlg3b3FiTEU",
-  #   #     '">'
-  #   #   )
-  #   # })
-  #   
-  #   renderUI({
-  #     # img(src = "CARROT_logo_and_text.png", align = "left", height="135px", width="675px")
-  #     img(src = "https://i.sstatic.net/mTqXa.png",
-  #         align = "left", height="135px", width="675px")
-  #   })
+  # Importing an external image (not working when used as an online app):
+  output$picture <-
+    # renderText({
+    #   c(
+    #     '<img src="',
+    #     # "https://github.com/frees86/carrot/blob/main/source/CARROT_logo_and_text.png",
+    #     "https://github.com/frees86/carrot/blob/ffb97af3e83c758f0fad36743fdfa18c56351034/source/CARROT_logo_and_text.png",
+    #     # "http://drive.google.com/uc?export=view&id=0By6SOdXnt-LFaDhpMlg3b3FiTEU",
+    #     '">'
+    #   )
+    # })
+
+    renderUI({
+      img(src = "CARROT_logo_and_text.png", align = "left", height="135px", width="675px")
+      # img(src = "https://i.sstatic.net/mTqXa.png",
+      #     align = "left", height="135px", width="675px")
+    })
+  
 }
 
 ######################################################################################################

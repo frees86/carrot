@@ -49,5 +49,5 @@ The decision support tool <i>CARROT</i> is associated to a companion scientific 
 
 This works originates from discussions held within the French network RhizosPHARE and the previous project PHARE (2021-2022) funded by INRAE.<br/>
 
-- <b>Conception & programing:</b> Frédéric Rees
+- <b>Conception & programing:</b> Frédéric Rees, Sylvain Chéreau
 - <b>Writing, editing & testing:</b> Frédéric Rees, Virginie Lauvergeat, Jean-Benoît Peltier, Gabin Piton, Aude Tixier, Sylvain Chéreau, Sylvie Dinant, Barbara Pawlak, François Perreau, Emmanuelle Personeni, Jean-Bernard Pouvreau, Alexandre de Saint Germain, Anouk Zancarini, Agnès Attard
