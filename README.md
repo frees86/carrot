@@ -40,9 +40,13 @@ Once a first option has been selected and the instruction for a new protocol ste
 <br/>
 When all possible instructions within one group of instructions have been covered, a new group of instructions can be selected, and the selection procedure can continue. Note that a group of instructions can be revisited later one. In such case, a warning is displayed to confirm the choice, and, when confirmed, the previous choices related to this group of instruction will be overwritten.<br/>
 
-Once all possible options within each group of instructions - or at any moment within the protocol construction, the user can access and download the resulting protocol corresponding to the selected choices by moving to the tab “Updated protocol”. There, the user can:
+At any moment within the protocol construction, the user can access and download the resulting protocol corresponding to the selected choices by moving to the tab “Updated protocol”. There, the user can:
 - download the protocol as a CSV file or Excel file summarizing the instruction and corresponding choice in each group, as well as detailing the compatibility test for each option, 
 - download a text file summarizing the main steps of the protocol.
+
+Once all possible options within each group of instructions, the user can leave or continue the program. Two options are available:
+- RE-START: All previous answers will be erased and the program will reinitialize at the starting page.
+- RESUME: The user can reconsider one of the previously visited groups of instructions. If so, the answers corresponding to this group of instructions will be erased, but other previous answers will be kept and will influence the compatibility of options for the revisited group.
 
 ### Reference
 

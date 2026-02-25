@@ -2,12 +2,12 @@
 # APPLICATION SHINY : CARROT PROTOCOL SELECTOR
 # =============================================
 
-# We document the version of the code, which will appear in the Shiny app (update the logo too!):
+# We document the version of the code (note: if using the logo, it needs to be updated too!):
 version <- "Version: 2026-02-25"
 
 # We define the path to the folder containing the csv or Excel files to be loaded:
 folder_path <- "./source/"
-# # IF THE PREVIOUS PATH CANNOT BE FOUND, you may need to give the whole path to this folder:
+# # # IF THE PREVIOUS PATH CANNOT BE FOUND, you may need to give the whole path to this folder:
 # folder_path <- "C:/Users/frees/carrot/source/"
 
 # # To install the required packages (to do only once - note that it may be important to update readxl):
@@ -63,8 +63,8 @@ downloadButton <- function(...) {
 # We build the user interface:
 ui <- page_fillable(
   
+  # General theme:
   theme = shinytheme("spacelab"),
-  # shinythemes::themeSelector(),
   collapsible = TRUE,
   # Customized color code for specific text lines and options:
   tags$head(
@@ -115,7 +115,7 @@ ui <- page_fillable(
     uiOutput("picture"),
     ),
   
-  # We set a horizontal line:
+  # We set a horizontal spacing:
   p(""),
 
   # Defining the layout with a main panel and a side panel:
@@ -283,7 +283,7 @@ ui <- page_fillable(
 
 server <- function(input, output, session) {
   
-  # Input stores the current values of all of the widgets in your app. These values will be saved 
+  # Input stores the current values of all of the widgets in the app. These values will be saved 
   # under the names that you gave the widgets in your ui.
   
   # Output contains variables that the UI can access. 
@@ -850,6 +850,8 @@ server <- function(input, output, session) {
     
   })
   #----------------------------------------------------------------------------------------------------
+  
+  #----------------------------------------------------------------------------------------------------
   # We record the options for later saving them in the history table:
   writing_options_as_text <- function() {
     
@@ -895,11 +897,7 @@ server <- function(input, output, session) {
     
     return (all_options_text)
   }
-  
-  # values$current_instruction_options <- as.character(reactive({writing_options_as_text()}))
-  
   #----------------------------------------------------------------------------------------------------
-  
   
   # 5) REACTING TO THE USER ACTION
   ################################
@@ -1000,9 +998,7 @@ server <- function(input, output, session) {
     values$backwards_option <- "Disabled"
   })
   #----------------------------------------------------------------------------------------------------
-  
-  #----------------------------------------------------------------------------------------------------
-  
+
   #----------------------------------------------------------------------------------------------------
   # NEXT: We set up the action following the click on the "Next" button (i.e. Confirm):
   observeEvent(input$button_next, {
@@ -1236,6 +1232,7 @@ server <- function(input, output, session) {
     #   )
     # })
     renderUI({
+      # This will read the corresponding file in the folder 'www' by default:
       img(src = "CARROT_logo_and_text.png", align = "left", height="135px", width="675px")
     })
   
