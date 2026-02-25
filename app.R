@@ -3,7 +3,7 @@
 # =============================================
 
 # We document the version of the code, which will appear in the Shiny app (update the logo too!):
-version <- "Version: 2026-02-24"
+version <- "Version: 2026-02-25"
 
 # We define the path to the folder containing the csv or Excel files to be loaded:
 folder_path <- "./source/"
@@ -202,17 +202,21 @@ ui <- page_fillable(
       conditionalPanel(
         condition = "output.screen == 'all_groups_done'",
         h2("Congratulations!"),
+        # We display the final text:
+        htmlOutput("final_page_text"),
         p(""),
-        p("You have now covered all possible instructions."),
-        p(paste("You can download the final protocol in .csv or in .txt.",
-                "The first file corresponds to a table containing the instructions, and, for each one, the corresponding options along with their compatibility with previous choices, and the corresponding final choice.",
-                "The second file corresponds to a synthetic, complete summarized text corresponding to your protocol.")),
         p(""),
-        p("You can leave the program here, restart from the beginning, or continue your exploration by re-visiting a specific group of instructions."),
         p(""),
-        actionButton("button_restart", "RE-START"),
-        actionButton("button_resume", "RESUME"),
-      )
+        # We add two buttons to RESUME or RESTART the program:
+        fluidRow(
+          column(6,align = "left",
+                 actionButton("button_resume", "RESUME", class = "btn-primary"),
+          ),
+          column(6,align = "right",
+                 actionButton("button_restart", "RE-START", class = "btn-primary"),
+          ),
+        ),
+      ),
     ),
     
     # DISPLAYING A SIDEBAR ON THE RIGHT:
@@ -342,7 +346,7 @@ server <- function(input, output, session) {
   # We first define a function for loading the decision tree and the information tree:
   load_data <- function(file_path, # Explicit path (ex: "D:/Documents/")
                         download_from_url=FALSE, # If TRUE, activates a way to download and convert the file into an Excel file without expliciting a recording of the dowloaded file
-                        csv_file=FALSE, # If TRUE, read.csv() will be usd instead of read_excel()
+                        csv_file=FALSE, # If TRUE, read.csv() will be used instead of read_excel()
                         worksheet="Decision tree", # Name of the worksheet to load in the Excel file
                         replace_this_character_by_white_space="", # A character to be replaced by white space (necessary for a proper concatenation of strings)
                         header=FALSE # Whether the first line corresponds to the header or not
@@ -378,18 +382,27 @@ server <- function(input, output, session) {
   
   #----------------------------------------------------------------------------------------------------
   # We attempt to load the initial data in the decision tree and in the information tree:
-  dt_file_path = paste0(folder_path, "CARROT_decision_tree.csv")
-  it_file_path = paste0(folder_path, "CARROT_information_tree.csv")
+  # dt_file_path = paste0(folder_path, "CARROT_decision_tree.csv")
+  # it_file_path = paste0(folder_path, "CARROT_information_tree.csv")
+  main_file_path = paste0(folder_path, "CARROT.xlsm")
 
   tryCatch({
-    decision_tree_df <- load_data(dt_file_path,
-                                  csv_file = TRUE)
+    # decision_tree_df <- load_data(dt_file_path,
+    #                               csv_file = TRUE)
+    decision_tree_df <- load_data(main_file_path,
+                                  worksheet="Decision tree")
     values$decision_tree <- decision_tree_df
     
-    information_tree_df <- load_data(it_file_path,
-                                     csv_file = TRUE,
+    # information_tree_df <- load_data(it_file_path,
+    #                                  csv_file = TRUE,
+    #                                  # Because the stupid read_excel function removes cells with white spaces only,
+    #                                  # we have converted all white spaces in the original file and now need to convert those back
+    #                                  # to white spaces:
+    #                                  replace_this_character_by_white_space="_")
+    information_tree_df <- load_data(main_file_path,
+                                     worksheet="Information tree",
                                      # Because the stupid read_excel function removes cells with white spaces only,
-                                     # we have converted all white spaces in the original file and need to convert those back
+                                     # we have converted all white spaces in the original file and now need to convert those back
                                      # to white spaces:
                                      replace_this_character_by_white_space="_")
     values$information_tree <- information_tree_df
@@ -603,7 +616,7 @@ server <- function(input, output, session) {
       # After covering each previous choice, we update the lists of status and conflicts:
       if (counts["Incomp"] > 0) {
         status_list[i] <- "Incompatible"
-        conflict_list[i] <- paste(conflicts, collapse = ", ")
+        conflict_list[i] <- paste(conflicts, collapse = "; ")
         number_of_incompatible_options <- number_of_incompatible_options + 1
       } else if (counts["Poss"] > 0) {
         status_list[i] <- "Possible"
@@ -642,7 +655,7 @@ server <- function(input, output, session) {
       index = block$indices,
       # The compatibility status:
       status = status_list,
-      # The conflict defined as empty:
+      # The list of previous choices in conflict:
       conflict = conflict_list,
       stringsAsFactors = FALSE
     ))
@@ -691,35 +704,33 @@ server <- function(input, output, session) {
       } else {
         # Then we switch the screen in order to display the instructions for the next group:
         values$screen <- "move_to_next_group"
-        
-        # And we update the corresponding radioButton to display already-examined groups in grey.
-        # We define the normal list to be displayed:
-        list_of_options <- list("1: Scientific objectives",
-                                "2: Plant growth conditions",
-                                "3: Sampling strategy",
-                                "4: Sample processing before analysis",
-                                "5: Sample analysis")
-        # We initialize the new list to be displayed with the HTML code:
-        new_HTML_list <- list_of_options
-        # We cover each group:
-        for (ID in seq(1,5)) {
-          # If the group corresponding to the current ID has been visited:
-          if (ID %in% values$visited_groups_id) {
-            special_format <- paste0("<p style='color: grey; margin-bottom:0; padding-top:0;'</p>",list_of_options[[ID]])
-            new_HTML_list[[ID]] <- HTML(special_format)
-          } else {
-            special_format <- paste0("<p style='color: black; margin-bottom:0; padding-top:0;'</p>",list_of_options[[ID]])
-            new_HTML_list[[ID]] <- HTML(special_format)
-          }
-        }
-        
-        updateRadioButtons(session, "continue_group",
-                           # tags$style(HTML("line-height:3;")),
-                           choiceNames = new_HTML_list, 
-                           choiceValues = c(1,2,3,4,5),
-                           selected=values$current_group_ID)
-        
       }
+      # In both cases, we update the corresponding radioButton to display already-examined groups in grey.
+      # We define the normal list to be displayed:
+      list_of_options <- list("1: Scientific objectives",
+                              "2: Plant growth conditions",
+                              "3: Sampling strategy",
+                              "4: Sample processing before analysis",
+                              "5: Sample analysis")
+      # We initialize the new list to be displayed with the HTML code:
+      new_HTML_list <- list_of_options
+      # We cover each group:
+      for (ID in seq(1,5)) {
+        # If the group corresponding to the current ID has been visited:
+        if (ID %in% values$visited_groups_id) {
+          special_format <- paste0("<p style='color: grey; margin-bottom:0; padding-top:0;'</p>",list_of_options[[ID]])
+          new_HTML_list[[ID]] <- HTML(special_format)
+        } else {
+          special_format <- paste0("<p style='color: black; margin-bottom:0; padding-top:0;'</p>",list_of_options[[ID]])
+          new_HTML_list[[ID]] <- HTML(special_format)
+        }
+      }
+      updateRadioButtons(session, "continue_group",
+                         # tags$style(HTML("line-height:3;")),
+                         choiceNames = new_HTML_list, 
+                         choiceValues = c(1,2,3,4,5),
+                         selected=values$current_group_ID)
+      
       # Otherwise, we continue the current group of instruction and just move to the next one
       # by assigning the current row to the next one that had been computed:
     } else {
@@ -965,6 +976,31 @@ server <- function(input, output, session) {
       ))
     }
   })
+  
+  # CONFIRM REVISITING A GROUP: In case the user has decided to revisit a group previously examined:
+  observeEvent(input$button_confirm_revisiting, {
+    # We remove the Dialog Box:
+    removeModal()
+    # If the user confirms this, we erase the answers corresponding to the group that is being revisited from the history table:
+    values$history <- values$history %>%
+      filter(Group_ID != values$current_group_ID)
+    # We update the full text of the protocol by concatenating the whole corresponding column in 'history'
+    # after arranging the rows according to the ascending order of Group_ID:
+    arranged_history <- values$history %>% arrange(Group_ID)
+    values$protocol_full_text <- HTML(paste0(arranged_history$Protocol_text))
+    output$protocol_full_text <-  renderUI({values$protocol_full_text})
+    # We get the starting and ending row index for the instructions corresponding to this group:
+    ranges <- values$groups_ranges[[values$current_group_ID]]
+    values$current_row <- ranges[1]
+    values$current_group_start <- ranges[1]
+    values$current_group_end <- ranges[2]
+    # We now allow moving to another type of screen:
+    values$screen <- "working"
+    # And we forbid using the "Back" button at the next step:
+    values$backwards_option <- "Disabled"
+  })
+  #----------------------------------------------------------------------------------------------------
+  
   #----------------------------------------------------------------------------------------------------
   
   #----------------------------------------------------------------------------------------------------
@@ -1004,10 +1040,8 @@ server <- function(input, output, session) {
     output$backwards_option <- reactive({"Allowed"})
     
   })
-  #----------------------------------------------------------------------------------------------------
   
-  #----------------------------------------------------------------------------------------------------
-  # CONFIRM INCOMPATIBLE: In case the user has selected an incompatible choice and confirmed his/her choice:
+# CONFIRM INCOMPATIBLE: In case the user has selected an incompatible choice and confirmed his/her choice:
   observeEvent(input$button_confirm_incompatible, {
     # We remove the Dialog Box:
     removeModal()
@@ -1019,26 +1053,6 @@ server <- function(input, output, session) {
     save_step(values$incompatible_pending$index, values$incompatible_pending$text)
     # We reset the incompatible pending table:
     values$incompatible_pending <- NULL
-  })
-  #----------------------------------------------------------------------------------------------------
-  
-  #----------------------------------------------------------------------------------------------------
-  # CONFIRM REVISITING A GROUP: In case the user has decided to revisit a group previously examined:
-  observeEvent(input$button_confirm_revisiting, {
-    # We remove the Dialog Box:
-    removeModal()
-    # If the user confirms this, we erase the answers from the history table:
-    values$history <- values$history %>%
-      filter(Group_ID != values$current_group_ID)
-    # We get the starting and ending row index for the instructions corresponding to this group:
-    ranges <- values$groups_ranges[[values$current_group_ID]]
-    values$current_row <- ranges[1]
-    values$current_group_start <- ranges[1]
-    values$current_group_end <- ranges[2]
-    # We now allow moving to another type of screen:
-    values$screen <- "working"
-    # And we forbid using the "Back" button at the next step:
-    values$backwards_option <- "Disabled"
   })
   #----------------------------------------------------------------------------------------------------
   
@@ -1124,6 +1138,19 @@ server <- function(input, output, session) {
   # RESTART FROM THE BEGINNING:
   # We define what happens after clicking on RESTART:
   observeEvent(input$button_restart, {
+    # We show a warning message, which needs to be confirmed before restarting:
+    showModal(modalDialog(
+      title = "WATCH OUT! You are about to reinitialize the program. Restarting will erase all previous answers. Do you wish to proceed?",
+      footer = tagList(
+        modalButton("Cancel"),
+        actionButton("button_confirm_restarting", "Confirm", class = "btn-danger")
+      )
+    ))
+  })
+  # CONFIRM RESTARTING FROM THE BEGINNING: In case the user has decided to restart and confirmed it:
+  observeEvent(input$button_confirm_restarting, {
+    # We remove the Dialog Box:
+    removeModal()
     # We now allow moving to another type of screen:
     values$screen <- "start"
     # We reinitialize the list of group ID already visited:
@@ -1142,39 +1169,56 @@ server <- function(input, output, session) {
   
   #----------------------------------------------------------------------------------------------------
   # RESUME THE EXPLORATION:
-  # We define what happens after clicking on RESTART:
+  # We define what happens after clicking on RESUME:
   observeEvent(input$button_resume, {
+    
+    showModal(modalDialog(
+      title = "WATCH OUT! You are about to resume the program. Resuming will allow you to reconsider any group of instructions while keeping all previous answers. Do you wish to proceed?",
+      footer = tagList(
+        modalButton("Cancel"),
+        actionButton("button_confirm_resuming", "Confirm", class = "btn-danger")
+      )
+    ))
+  })
+  # CONFIRM RESUMING: In case the user has decided to resume and confirmed it:
+  observeEvent(input$button_confirm_resuming, {
+    # We remove the Dialog Box:
+    removeModal()
+
+    # # IF WE WANT TO RESET ALL GROUPS:
+    # # We reinitialize the list of group ID already visited:
+    # values$visited_groups_id <- list()
+    # # And we update the corresponding radioButton to display already-examined groups in grey.
+    # # We define the normal list to be displayed:
+    # list_of_options <- list("1: Scientific objectives",
+    #                         "2: Plant growth conditions",
+    #                         "3: Sampling strategy",
+    #                         "4: Sample processing before analysis",
+    #                         "5: Sample analysis")
+    # # We initialize the new list to be displayed with the HTML code:
+    # new_HTML_list <- list_of_options
+    # # We cover each group:
+    # for (ID in seq(1,5)) {
+    #   # If the group corresponding to the current ID has been visited:
+    #   if (ID %in% values$visited_groups_id) {
+    #     special_format <- paste0("<p style='color: grey; margin-bottom:0; padding-top:0;'</p>",list_of_options[[ID]])
+    #     new_HTML_list[[ID]] <- HTML(special_format)
+    #   } else {
+    #     special_format <- paste0("<p style='color: black; margin-bottom:0; padding-top:0;'</p>",list_of_options[[ID]])
+    #     new_HTML_list[[ID]] <- HTML(special_format)
+    #   }
+    # }
+    # updateRadioButtons(session, "continue_group",
+    #                    # tags$style(HTML("line-height:3;")),
+    #                    choiceNames = new_HTML_list, 
+    #                    choiceValues = c(1,2,3,4,5),
+    #                    selected=values$current_group_ID)
+    
+    # OTHERWISE, ONLY ONE GROUP WILL BE VISITED BEFORE DISPLAYING AGAIN THE FINAL PAGE WITH THE OPTION RESUME
+    
     # We now allow moving to another type of screen:
     values$screen <- "move_to_next_group"
-    # We reinitialize the list of group ID already visited:
-    values$visited_groups_id <- list()
-    # And we update the corresponding radioButton to display already-examined groups in grey.
-    # We define the normal list to be displayed:
-    list_of_options <- list("1: Scientific objectives",
-                            "2: Plant growth conditions",
-                            "3: Sampling strategy",
-                            "4: Sample processing before analysis",
-                            "5: Sample analysis")
-    # We initialize the new list to be displayed with the HTML code:
-    new_HTML_list <- list_of_options
-    # We cover each group:
-    for (ID in seq(1,5)) {
-      # If the group corresponding to the current ID has been visited:
-      if (ID %in% values$visited_groups_id) {
-        special_format <- paste0("<p style='color: grey; margin-bottom:0; padding-top:0;'</p>",list_of_options[[ID]])
-        new_HTML_list[[ID]] <- HTML(special_format)
-      } else {
-        special_format <- paste0("<p style='color: black; margin-bottom:0; padding-top:0;'</p>",list_of_options[[ID]])
-        new_HTML_list[[ID]] <- HTML(special_format)
-      }
-    }
-    updateRadioButtons(session, "continue_group",
-                       # tags$style(HTML("line-height:3;")),
-                       choiceNames = new_HTML_list, 
-                       choiceValues = c(1,2,3,4,5),
-                       selected=values$current_group_ID)
-
-        # And we forbid using the "Back" button at the next step:
+    # And we forbid using the "Back" button at the next step:
     values$backwards_option <- "Disabled"
   })
   #----------------------------------------------------------------------------------------------------
@@ -1182,7 +1226,20 @@ server <- function(input, output, session) {
   # 6) OPTIONAL DISPLAY
   #####################
   
-  # Option for special display according to the current group of instruction:
+  # Importing an external image as the logo:
+  output$picture <-
+    # renderText({
+    #   c(
+    #     '<img src="',
+    #     "https://github.com/frees86/carrot/blob/main/source/CARROT_logo_and_text.png",
+    #     '">'
+    #   )
+    # })
+    renderUI({
+      img(src = "CARROT_logo_and_text.png", align = "left", height="135px", width="675px")
+    })
+  
+  # Displaying the name of the current group of instructions with a special color:
   output$group_indicator <- renderUI({
     req(current_block())
     grp <- as.character(values$decision_tree[values$current_row, 1])
@@ -1191,33 +1248,48 @@ server <- function(input, output, session) {
       span(grp, style = "color: rgb(217,152,21); font-weight: bold")
     )
   })
-  # Option for creating a summarized history table with only Instruction and Choice:
+  
+  # Creating a summarized history table with only Instruction and Choice:
   output$mini_history_table <- renderTable({
     req(values$history)
     if(nrow(values$history) == 0) return(NULL)
     tail(values$history[, c("Instruction", "Choice")], 5)
   }, colnames = FALSE
   )
-  # Option for displaying the final table:
+  # Displaying the final table:
   output$final_table <- renderDT({
     req(values$history)
     datatable(values$history[, c("Group", "Instruction", "Choice")], 
               options = list(pageLength = 50))
   })
   
-  # Options for downloading the final protocol as CSV file:
+  # Creating the final text to be displayed at the end of the program:
+  output$final_page_text <- renderUI({
+    # We use HTML and paste with the separator <br> for line breaks:
+    HTML(paste(
+      "You have now covered all possible instructions.",
+      "You can download the final protocol in .csv or in .txt.",
+      "The first file corresponds to a table containing the instructions, and, for each one, the corresponding options along with their compatibility with previous choices, and the corresponding final choice.",
+      "The second file corresponds to a synthetic, complete summarized text corresponding to your protocol.",
+      "",
+      "You can leave the program here by closing this window, or:",
+      "   - RE-START the program, which will erase any previous answer,",
+      "   - RESUME the program and continue your exploration by re-visiting a specific group of instructions - if so, only the answers corresponding to this group of instructions will be erased.",
+      sep="<br/>"
+    ))
+  })
+  
+  # Downloading the final protocol as CSV file:
   output$download_protocol_csv <- downloadHandler(
     filename = function() { paste("CARROT_Protocol_", Sys.Date(), ".csv", sep="") },
     content = function(file) {
       # We select only the columns of interest in the 'history' table:
       write.csv(values$history[, c("Group", "Instruction", "Options", "Choice")],
                 file, row.names = FALSE)
-      # write.csv2(values$history[, c("Group", "Instruction", "Options", "Choice")], 
-      #           file, row.names = FALSE)
     }
   )
   
-  # Options for downloading the final protocol as Excel file:
+  # Downloading the final protocol as Excel file:
   output$download_protocol_excel <- downloadHandler(
     filename = function() { paste("CARROT_Protocol_", Sys.Date(), ".xlsx", sep="") },
     content = function(file) {
@@ -1227,31 +1299,13 @@ server <- function(input, output, session) {
     }
   )
   
-  # Options for downloading the final protocol as .txt file:
+  # Downloading the final protocol as .txt file:
   output$download_protocol_text <- downloadHandler(
     filename = function() { paste("CARROT_Protocol_", Sys.Date(), ".txt", sep="") },
     content = function(file) {
       writeLines(values$protocol_full_text, file)
     }
   )
-  
-  # Importing an external image (not working when used as an online app):
-  output$picture <-
-    # renderText({
-    #   c(
-    #     '<img src="',
-    #     # "https://github.com/frees86/carrot/blob/main/source/CARROT_logo_and_text.png",
-    #     "https://github.com/frees86/carrot/blob/ffb97af3e83c758f0fad36743fdfa18c56351034/source/CARROT_logo_and_text.png",
-    #     # "http://drive.google.com/uc?export=view&id=0By6SOdXnt-LFaDhpMlg3b3FiTEU",
-    #     '">'
-    #   )
-    # })
-
-    renderUI({
-      img(src = "CARROT_logo_and_text.png", align = "left", height="135px", width="675px")
-      # img(src = "https://i.sstatic.net/mTqXa.png",
-      #     align = "left", height="135px", width="675px")
-    })
   
 }
 

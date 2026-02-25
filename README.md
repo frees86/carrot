@@ -35,19 +35,24 @@ Once a first option has been selected and the instruction for a new protocol ste
 <br/>
 <i> Note: if all possible options of a given instruction are deemed incompatible with previous choices, the instruction will be skipped and the program will automatically display the next instruction without notice. </i><br/>
 <br/>
+<i> Note: Depending on your progression within a given group of instructions, you can click on “Go back” to move back to the previous instruction of the current group of instruction, or click on “Skip this” to move directly to the next instruction without deciding - this may be used in particular to avoid a step to influence the compatibility suggested for the options of the next instructions The decision to skip instruction will appear in the final results. </i>
+<br/>
+<br/>
 When all possible instructions within one group of instructions have been covered, a new group of instructions can be selected, and the selection procedure can continue. Note that a group of instructions can be revisited later one. In such case, a warning is displayed to confirm the choice, and, when confirmed, the previous choices related to this group of instruction will be overwritten.<br/>
 
 Once all possible options within each group of instructions - or at any moment within the protocol construction, the user can access and download the resulting protocol corresponding to the selected choices by moving to the tab “Updated protocol”. There, the user can:
-- download the protocol as a CSV file summarizing the instruction and corresponding choice in each group, as well as detailing the compatibility test for each option, 
+- download the protocol as a CSV file or Excel file summarizing the instruction and corresponding choice in each group, as well as detailing the compatibility test for each option, 
 - download a text file summarizing the main steps of the protocol.
 
 ### Reference
 
-The decision support tool <i>CARROT</i> is associated to a companion scientific article, currently under review.
+The decision support tool <i>CARROT</i> is associated to a companion scientific article, currently under review:
+
+<i>Frédéric Rees, Virginie Lauvergeat, Gabin Piton, Aude Tixier, Sylvain Chéreau, Sylvie Dinant, Barbara Pawlak, François Perreau, Emmanuelle Personeni, Jean-Bernard Pouvreau, Anouk Zancarini, Jean-Benoît Peltier, and Agnès Attard (2026). Unlocking research on rhizodeposition: a step-by-step guide for producing, sampling and analyzing rhizodeposits.</i>
 
 ### Credits
 
-This works originates from discussions held within the French network RhizosPHARE and the previous project PHARE (2021-2022) funded by INRAE.<br/>
+This works originates from discussions held within the French network <i>RhizosPHARE</i> and the previous project <i>PHARE</i> (2021-2022) funded by INRAE.<br/>
 
 - <b>Conception & programing:</b> Frédéric Rees, Sylvain Chéreau
 - <b>Writing, editing & testing:</b> Frédéric Rees, Virginie Lauvergeat, Jean-Benoît Peltier, Gabin Piton, Aude Tixier, Sylvain Chéreau, Sylvie Dinant, Barbara Pawlak, François Perreau, Emmanuelle Personeni, Jean-Bernard Pouvreau, Alexandre de Saint Germain, Anouk Zancarini, Agnès Attard
